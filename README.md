@@ -10,6 +10,8 @@ in a container while mounting your local workspace and Codex settings.
 - Mounts a local workspace into `/workspace`.
 - Masks a sensitive subdirectory inside the workspace by mounting an empty
   named volume over `/workspace/app/settings`.
+- Installs `ca-certificates` and passes host proxy env vars through to the
+  container (if present) to reduce TLS/proxy connectivity issues.
 
 ## Usage
 
@@ -19,6 +21,19 @@ in a container while mounting your local workspace and Codex settings.
 ```bash
 ./run.sh
 ```
+
+## Connectivity check (inside container)
+
+If Codex streaming fails with errors like:
+`stream disconnected before completion: error sending request for url (...)`
+run this inside the container:
+
+```bash
+curl -I https://chatgpt.com/backend-api/codex/responses
+```
+
+You should at least get an HTTP response (often `401/403` is fine for this
+check). DNS/TLS/proxy failures here indicate a container network/trust issue.
 
 ## Optional: mask a different subdirectory
 
